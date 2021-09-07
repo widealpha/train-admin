@@ -4,7 +4,7 @@ class HiveUtils {
   static late Box _box;
 
   static Future<void> init() async {
-    _box = await Hive.openBox('user');
+    _box = await Hive.openBox('user-admin');
   }
 
   static Future<void> set(String key, dynamic value) {

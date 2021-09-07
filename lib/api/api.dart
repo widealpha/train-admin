@@ -148,6 +148,11 @@ class TrainApi {
   static String _trainPrice = host + '/train/trainPrice';
   static String _trainTicketRemaining = host + '/train/trainTicketRemaining';
   static String _trainStations = host + '/train/trainStations';
+  static String _allStationTrainCode = host + '/train/allStationTrainCode';
+  static String _stopTrain = host + '/admin/stopTrain';
+  static String _startTrain = host + '/admin/startTrain';
+  static String _updateStartTime = host + '/admin/updateStartTime';
+  static String _updateArriveTime = host + '/admin/updateArriveTime';
 
   static Future<Train?> trainInfo(String stationTrainCode) async {
     Response response = await Connection.dio.post(_trainInfo,
@@ -276,6 +281,76 @@ class TrainApi {
     }
     return [];
   }
+
+  static Future<List<String>> allStationTrainCode() async {
+    Response response = await Connection.dio
+        .post(_allStationTrainCode, options: Connection.options);
+    if (response.data['code'] == 0) {
+      List l = response.data['data'];
+      return l.map((e) => e as String).toList();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return [];
+  }
+
+  static Future<bool> startTrain(String stationTrainCode) async {
+    Response response = await Connection.dio.post(_startTrain,
+        options: Connection.options,
+        queryParameters: {'stationTrainCode': stationTrainCode});
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> stopTrain(String stationTrainCode) async {
+    Response response = await Connection.dio.post(_stopTrain,
+        options: Connection.options,
+        queryParameters: {'stationTrainCode': stationTrainCode});
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateStartTime(String stationTrainCode,
+      String stationTelecode, num stationNo, String? startTime) async {
+    Response response = await Connection.dio
+        .post(_updateStartTime, options: Connection.options, queryParameters: {
+      'stationTrainCode': stationTrainCode,
+      'stationTelecode': stationTelecode,
+      'stationNo': stationNo,
+      'startTime': startTime
+    });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateArriveTime(String stationTrainCode,
+      String stationTelecode, num stationNo, String? arriveTime) async {
+    Response response = await Connection.dio
+        .post(_updateArriveTime, options: Connection.options, queryParameters: {
+      'stationTrainCode': stationTrainCode,
+      'stationTelecode': stationTelecode,
+      'stationNo': stationNo,
+      'arriveTime': arriveTime
+    });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
 }
 
 class StationApi {
@@ -327,6 +402,17 @@ class StationApi {
       BotToast.showText(text: response.data['message']);
     }
     return null;
+  }
+
+  static Future<void> updateStationCache() async {
+    Response response =
+        await Connection.dio.post(_allStations, options: Connection.options);
+    if (response.data['code'] == 0) {
+      List l = response.data['data'];
+      _stationCache = l.map((e) => Station.fromJson(e)).toList();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
   }
 }
 
@@ -550,20 +636,36 @@ class OrderFormApi {
 
 class SystemApi {
   static String _systemSetting = host + '/system/systemSetting';
+  static String _updateSystemSetting = host + '/system/updateSystemSetting';
 
   static Future<SystemSetting?> getSystemSetting() async {
     try {
-      Response response =
-      await Connection.dio.post(_systemSetting, options: Connection.options);
+      Response response = await Connection.dio
+          .post(_systemSetting, options: Connection.options);
       if (response.data['code'] == 0) {
         return SystemSetting.fromJson(response.data['data']);
       } else {
         BotToast.showText(text: response.data['message']);
       }
-    } catch (e){
+    } catch (e) {
       return null;
     }
     return null;
+  }
+
+  static Future<bool> updateSystemSetting(SystemSetting setting) async {
+    try {
+      Response response = await Connection.dio.post(_updateSystemSetting,
+          options: Connection.options, data: setting.toJson());
+      if (response.data['code'] == 0) {
+        return response.data['data'] ?? false;
+      } else {
+        BotToast.showText(text: response.data['message']);
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
   }
 }
 
@@ -609,6 +711,10 @@ class PassengerApi {
 
 class CoachApi {
   static String _coachInfo = host + '/coach/coachInfo';
+  static String _trainCoachList = host + '/coach/trainCoaches';
+  static String _updateCoach = host + '/admin/updateCoach';
+  static String _addCoach = host + '/admin/addCoach';
+  static String _deleteCoach = host + '/admin/deleteCoach';
 
   static Future<Coach?> coachInfo(num coachId) async {
     Response response = await Connection.dio.post(_coachInfo,
@@ -619,5 +725,65 @@ class CoachApi {
       BotToast.showText(text: response.data['message'] ?? '未找到车厢');
     }
     return null;
+  }
+
+  static Future<List<Coach>> trainCoachList(String stationTrainCode) async {
+    Response response = await Connection.dio.post(_trainCoachList,
+        options: Connection.options,
+        queryParameters: {'stationTrainCode': stationTrainCode});
+    if (response.data['code'] == 0) {
+      List l = response.data['data'];
+      return l.map((e) => Coach.fromJson(e)).toList();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return [];
+  }
+
+  static Future<bool> updateCoach(
+      num coachId, num seatCount, String seatTypeCode) async {
+    Response response = await Connection.dio.post(_updateCoach,
+        options: Connection.options,
+        queryParameters: {
+          'coachId': coachId,
+          'seatCount': seatCount,
+          'seatTypeCode': seatTypeCode
+        });
+    if (response.data['code'] == 0) {
+      return response.data['code'] == 0;
+    } else {
+      BotToast.showText(text: response.data['message'] ?? '未找到车厢');
+    }
+    return false;
+  }
+
+  static Future<bool> addCoach(num coachNo, num seatCount, String seatTypeCode,
+      String stationTrainCode) async {
+    Response response = await Connection.dio
+        .post(_addCoach, options: Connection.options, queryParameters: {
+      'coachNo': coachNo,
+      'seatCount': seatCount,
+      'seatTypeCode': seatTypeCode,
+      'stationTrainCode': stationTrainCode
+    });
+    if (response.data['code'] == 0) {
+      return response.data['code'] == 0;
+    } else {
+      BotToast.showText(text: response.data['message'] ?? '未找到车厢');
+    }
+    return false;
+  }
+
+  static Future<bool> deleteCoach(num coachId) async {
+    Response response = await Connection.dio
+        .post(_deleteCoach, options: Connection.options, queryParameters: {
+      'coachId': coachId,
+    });
+    if (response.data['code'] == 0) {
+      return response.data['code'] == 0;
+    } else {
+      BotToast.showText(text: response.data['message'] ?? '未找到车厢');
+    }
+    return false;
   }
 }

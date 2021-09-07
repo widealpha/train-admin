@@ -9,6 +9,8 @@ import 'package:train/ui/main_page.dart';
 import 'package:train/util/hive_util.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'admin/admin_main.dart';
+
 void main() async {
   await Hive.initFlutter('train_db');
   await HiveUtils.init();
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
         child = botToastBuilder(context, child);
         return child;
       },
-      home: MainPage(),
+      home: AdminMainPage(),
     );
   }
 }
