@@ -147,7 +147,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.train_rounded), label: '火车管理'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle_rounded), label: '价格管理'),
+              icon: Icon(Icons.price_check_rounded), label: '价格管理'),
           BottomNavigationBarItem(
               icon: Icon(Icons.supervised_user_circle_rounded), label: '用户管理'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: '系统设置'),

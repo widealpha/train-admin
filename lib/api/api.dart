@@ -153,6 +153,13 @@ class TrainApi {
   static String _startTrain = host + '/admin/startTrain';
   static String _updateStartTime = host + '/admin/updateStartTime';
   static String _updateArriveTime = host + '/admin/updateArriveTime';
+  static String _updateTrainStation = host + '/admin/updateTrainStation';
+  static String _updateTrainClassPriceRatio =
+      host + '/admin/updateTrainClassPriceRatio';
+  static String _updateSeatTypePriceRatio =
+      host + '/admin/updateSeatTypePriceRatio';
+  static String _updateStationPriceRatio =
+      host + '/admin/updateStationPriceRatio';
 
   static Future<Train?> trainInfo(String stationTrainCode) async {
     Response response = await Connection.dio.post(_trainInfo,
@@ -344,6 +351,85 @@ class TrainApi {
       'stationNo': stationNo,
       'arriveTime': arriveTime
     });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateTrainStation(
+      String stationTrainCode,
+      String stationTelecode,
+      num stationNo,
+      String updateStationTelecode) async {
+    Response response = await Connection.dio.post(_updateTrainStation,
+        options: Connection.options,
+        queryParameters: {
+          'stationTrainCode': stationTrainCode,
+          'stationTelecode': stationTelecode,
+          'stationNo': stationNo,
+          'updateStationTelecode': updateStationTelecode
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateTrainClassPriceRatio(
+      String trainClassCode, double? ratio) async {
+    if (ratio == null) {
+      return false;
+    }
+    Response response = await Connection.dio.post(_updateTrainClassPriceRatio,
+        options: Connection.options,
+        queryParameters: {
+          'trainClassCode': trainClassCode,
+          'ratio': ratio,
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateSeatTypePriceRatio(
+      String seatTypeCode, double? ratio) async {
+    if (ratio == null) {
+      return false;
+    }
+    Response response = await Connection.dio.post(_updateSeatTypePriceRatio,
+        options: Connection.options,
+        queryParameters: {
+          'seatTypeCode': seatTypeCode,
+          'ratio': ratio,
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> updateStationPriceRatio(String startStationTelecode,
+      String endStationTelecode, double? ratio) async {
+    if (ratio == null) {
+      return false;
+    }
+    Response response = await Connection.dio.post(_updateStationPriceRatio,
+        options: Connection.options,
+        queryParameters: {
+          'startStationTelecode': startStationTelecode,
+          'endStationTelecode': endStationTelecode,
+          'ratio': ratio,
+        });
     if (response.data['code'] == 0) {
       return response.data['data'];
     } else {
@@ -785,5 +871,33 @@ class CoachApi {
       BotToast.showText(text: response.data['message'] ?? '未找到车厢');
     }
     return false;
+  }
+}
+
+class SellApi{
+  static String _getSellByTime = host + '/admin/getSellByTime';
+  static String _getSellByTrainClass = host + '/admin/getSellByTrainClass';
+  static Future<Map<String, num>> getSellByTime() async {
+    Response response = await Connection.dio
+        .post(_getSellByTime, options: Connection.options);
+    if (response.data['code'] == 0) {
+      Map m = response.data['data'];
+      return m.cast<String, num>();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return {};
+  }
+
+  static Future<Map<String, num>> getSellByTrainClass() async {
+    Response response = await Connection.dio
+        .post(_getSellByTrainClass, options: Connection.options);
+    if (response.data['code'] == 0) {
+      Map m = response.data['data'];
+      return m.cast<String, num>();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return {};
   }
 }

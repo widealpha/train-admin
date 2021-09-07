@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:train/api/api.dart';
 import 'package:train/bean/coach.dart';
+import 'package:train/bean/station.dart';
 import 'package:train/bean/train.dart';
 import 'package:train/bean/train_station.dart';
+import 'package:train/ui/station_page.dart';
 
 class EditTrainPage extends StatefulWidget {
   final String stationTrainCode;
@@ -153,8 +155,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                       children: [
                         TextButton(
                             onPressed: () async {
-                              await CoachApi.deleteCoach(coachList[i].coachId);
-                              fetchData();
+                              deleteCoach(coachList[i]);
                             },
                             child: Text('删除')),
                         TextButton(
@@ -182,13 +183,23 @@ class _EditTrainPageState extends State<EditTrainPage> {
                 itemBuilder: (c, i) => ListTile(
                   leading: Text('${i + 1}'),
                   title: Text(
-                      '${getStationName(trainStationList[i].stationTelecode)}->${i < trainStationList.length - 1 ? getStationName(trainStationList[i + 1].stationTelecode) : '终点'}'),
-                  trailing: TextButton(
-                      onPressed: () async {
-                        await CoachApi.deleteCoach(coachList[i].coachId);
-                        fetchData();
-                      },
-                      child: Text('删除')),
+                      '${i == 0 ? '始发站:' : i == trainStationList.length - 1 ? '终点站:' : ''}'
+                      '${getStationName(trainStationList[i].stationTelecode)}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                          onPressed: () async {
+                            fetchData();
+                          },
+                          child: Text('删除')),
+                      TextButton(
+                          onPressed: () {
+                            updateTrainStation(trainStationList[i]);
+                          },
+                          child: Text('编辑'))
+                    ],
+                  ),
                 ),
                 itemCount: trainStationList.length,
                 separatorBuilder: (context, index) => Column(
@@ -440,7 +451,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                           labelText: '座位种类',
                           suffixIcon: TextButton.icon(
                             onPressed: () async {
-                              String s = await Get.dialog(SimpleDialog(
+                              String? s = await Get.dialog(SimpleDialog(
                                 children: seatTypeMapper.keys
                                     .map((e) => RadioListTile(
                                         title: Text('$e: ${seatTypeMapper[e]}'),
@@ -451,7 +462,9 @@ class _EditTrainPageState extends State<EditTrainPage> {
                                         }))
                                     .toList(),
                               ));
-                              typeController.text = seatTypeMapper[s]!;
+                              if (s != null) {
+                                typeController.text = seatTypeMapper[s]!;
+                              }
                             },
                             icon: Icon(Icons.edit_rounded),
                             label: Text('编辑'),
@@ -510,6 +523,82 @@ class _EditTrainPageState extends State<EditTrainPage> {
               ],
             )));
   }
+
+  Future<void> deleteCoach(Coach coach) async {
+    await CoachApi.deleteCoach(coach.coachId);
+    fetchData();
+  }
+
+  Future<void> updateTrainStation(TrainStation trainStation) async {
+    final TextEditingController stationController = TextEditingController(
+        text: getStationName(trainStation.stationTelecode));
+    final TextEditingController stationNoController =
+        TextEditingController(text: '${trainStation.stationNo}');
+    late Station station;
+    Get.dialog(AlertDialog(
+      title: Text('编辑站点信息'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: stationController,
+              readOnly: true,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: '更新站点信息',
+                  labelText: '更新站点信息',
+                  suffixIcon: TextButton.icon(
+                    onPressed: () async {
+                      Station? s = await Get.to(() => StationPage());
+                      if (s != null) {
+                        station = s;
+                        stationController.text = s.name;
+                      }
+                    },
+                    icon: Icon(Icons.edit_rounded),
+                    label: Text('编辑'),
+                  )),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: stationNoController,
+              readOnly: true,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '站点顺序',
+                labelText: '站点顺序',
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () async {
+              await TrainApi.updateTrainStation(
+                  trainStation.stationTrainCode,
+                  trainStation.stationTelecode,
+                  trainStation.stationNo,
+                  station.telecode);
+              Get.back();
+              fetchData();
+            },
+            child: Text('确认')),
+        TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: Text('取消')),
+      ],
+    ));
+  }
+
+  Future<void> addTrainStation() async {}
 
   String getStationName(String? telecode) {
     if (telecode == null) {
