@@ -32,7 +32,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
   @override
   void initState() {
     super.initState();
-    fetchSetting();
+    fetchData();
   }
 
   @override
@@ -124,6 +124,8 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                                             _trainClassController.text);
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
+                                    } else {
+                                      fetchData();
                                     }
                                   },
                                   icon: Icon(Icons.update),
@@ -172,6 +174,8 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                                             seatType, _seatTypeController.text);
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
+                                    } else {
+                                      fetchData();
                                     }
                                   },
                                   icon: Icon(Icons.update),
@@ -186,7 +190,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
     );
   }
 
-  void fetchSetting() async {
+  void fetchData() async {
     setState(() {
       loading = true;
     });
