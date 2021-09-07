@@ -20,6 +20,7 @@ class _PriceManagePageState extends State<PriceManagePage> {
   Map<String, String> trainClassMap = {};
   Map<String, String> seatTypeMap = {};
   Map<String, double> sellTimeMap = {};
+  List<double> sellData = [];
   Map<String, double> sellTrainClassMap = {};
   String startStation = '';
   String endStation = '';
@@ -290,8 +291,8 @@ class _PriceManagePageState extends State<PriceManagePage> {
                   )),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child:
-                        Text('火车售票额统计', style: TextStyle(color: Colors.grey)),
+                    child: Text('火车售票额统计(单位:千元)',
+                        style: TextStyle(color: Colors.grey)),
                   ),
                 ],
               )),
@@ -319,6 +320,17 @@ class _PriceManagePageState extends State<PriceManagePage> {
     (await SellApi.getSellByTrainClass()).forEach((key, value) {
       sellTrainClassMap[key] = value.toDouble();
     });
+    DateTime dateTime = DateTime.now();
+    dateTime = dateTime.subtract(Duration(days: 6));
+
+    for (int i = 0; i < 7; i++) {
+      DateTime t = dateTime.add(Duration(days: i));
+      if (sellTimeMap[t.toIso8601String().substring(0, 10)] != null) {
+        sellData.add(sellTimeMap[t.toIso8601String().substring(0, 10)]!);
+      } else {
+        sellData.add(0.0);
+      }
+    }
 
     setState(() {
       loading = false;
@@ -382,15 +394,9 @@ class _PriceManagePageState extends State<PriceManagePage> {
               fontWeight: FontWeight.bold,
               fontSize: 16),
           getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
+            DateTime dateTime = DateTime.now();
+            dateTime = dateTime.subtract(Duration(days: 6 - value.toInt()));
+            return dateTime.toIso8601String().substring(5, 10);
           },
           margin: 8,
         ),
@@ -404,12 +410,12 @@ class _PriceManagePageState extends State<PriceManagePage> {
           ),
           getTitles: (value) {
             switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
+              case -100:
+                return '-100';
+              case 0:
+                return '0';
+              case 100:
+                return '100';
             }
             return '';
           },
@@ -421,24 +427,17 @@ class _PriceManagePageState extends State<PriceManagePage> {
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
       minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
+      maxX: 7,
+      minY: -100,
+      maxY: 100,
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
+          spots: List.generate(
+              sellData.length, (i) => FlSpot(i.toDouble(), sellData[i] / 100)),
           isCurved: true,
           colors: randomColors,
           barWidth: 5,
-          isStrokeCapRound: true,
+          isStrokeCapRound: false,
           dotData: FlDotData(
             show: false,
           ),

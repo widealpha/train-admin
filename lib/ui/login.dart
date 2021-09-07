@@ -14,6 +14,11 @@ class LoginPage extends StatelessWidget {
 
   Future<String?> _loginUser(LoginData data) async {
     String s = await UserApi.login(data.name, data.password);
+    bool b = await UserApi.isAdmin();
+    if (!b){
+      UserApi.logout();
+      return "您不是管理员,无权登录";
+    }
     if (s == '登录成功') {
       BotToast.showText(text: '登录成功');
       Get.back();

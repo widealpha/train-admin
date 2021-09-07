@@ -42,6 +42,10 @@ class UserApi {
   static String _userInfo = host + '/userInfo/myInfo';
   static String _uploadImage = host + '/userInfo/uploadImage';
   static String _updateInfo = host + '/userInfo/updateInfo';
+  static String _isAdmin = host + '/userInfo/isAdmin';
+  static String _allUserInfo = host + '/admin/allUserInfo';
+  static String _deleteUser = host + '/admin/deleteUser';
+
 
   static bool get isLogin => HiveUtils.get('token') != null;
 
@@ -75,6 +79,20 @@ class UserApi {
       return '注册成功';
     } else {
       return response.data['message'];
+    }
+  }
+
+  static Future<bool> isAdmin() async {
+    try {
+      Response response =
+          await Connection.dio.post(_isAdmin, options: Connection.options);
+      if (response.data['code'] == 0) {
+        return response.data['data'];
+      } else {
+        return response.data['message'];
+      }
+    } catch (e) {
+      return false;
     }
   }
 
@@ -137,6 +155,31 @@ class UserApi {
     }
     return false;
   }
+
+  static Future<List<UserInfo>> allUserInfo() async {
+    Response response =
+    await Connection.dio.post(_allUserInfo, options: Connection.options);
+    if (response.data['code'] == 0) {
+      List l = response.data['data'];
+      return l.map((e) => UserInfo.fromJson(e)).toList();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return [];
+  }
+
+  static Future<bool> deleteUser(num userId) async {
+    Response response =
+    await Connection.dio.post(_deleteUser, options: Connection.options, queryParameters: {
+      'userId':userId
+    });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
 }
 
 class TrainApi {
@@ -154,12 +197,15 @@ class TrainApi {
   static String _updateStartTime = host + '/admin/updateStartTime';
   static String _updateArriveTime = host + '/admin/updateArriveTime';
   static String _updateTrainStation = host + '/admin/updateTrainStation';
+  static String _addTrainStation = host + '/admin/addTrainStation';
+  static String _deleteTrainStation = host + '/admin/deleteTrainStation';
   static String _updateTrainClassPriceRatio =
       host + '/admin/updateTrainClassPriceRatio';
   static String _updateSeatTypePriceRatio =
       host + '/admin/updateSeatTypePriceRatio';
   static String _updateStationPriceRatio =
       host + '/admin/updateStationPriceRatio';
+  static String _addTrain = host + '/admin/addTrain';
 
   static Future<Train?> trainInfo(String stationTrainCode) async {
     Response response = await Connection.dio.post(_trainInfo,
@@ -363,14 +409,75 @@ class TrainApi {
       String stationTrainCode,
       String stationTelecode,
       num stationNo,
-      String updateStationTelecode) async {
+      String updateStationTelecode,
+      String startTime,
+      String arriveTime,
+      num? arriveDayDiff,
+      num? startDayDiff) async {
+    if (arriveDayDiff == null || startDayDiff == null) {
+      return false;
+    }
     Response response = await Connection.dio.post(_updateTrainStation,
         options: Connection.options,
         queryParameters: {
           'stationTrainCode': stationTrainCode,
           'stationTelecode': stationTelecode,
           'stationNo': stationNo,
-          'updateStationTelecode': updateStationTelecode
+          'updateStationTelecode': updateStationTelecode,
+          'startTime': startTime,
+          'arriveTime': arriveTime,
+          'arriveDayDiff': arriveDayDiff,
+          'startDayDiff': startDayDiff
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> addTrainStation(
+      String stationTrainCode,
+      String stationTelecode,
+      num? stationNo,
+      String? startTime,
+      String? arriveTime,
+      num? arriveDayDiff,
+      num? startDayDiff) async {
+    if (arriveDayDiff == null ||
+        startDayDiff == null ||
+        stationNo == null ||
+        startTime == null ||
+        arriveTime == null) {
+      return false;
+    }
+    Response response = await Connection.dio
+        .post(_addTrainStation, options: Connection.options, queryParameters: {
+      'stationTrainCode': stationTrainCode,
+      'stationTelecode': stationTelecode,
+      'stationNo': stationNo,
+      'startTime': startTime,
+      'arriveTime': arriveTime,
+      'arriveDayDiff': arriveDayDiff,
+      'startDayDiff': startDayDiff
+    });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> deleteTrainStation(
+      String stationTrainCode, String stationTelecode, num stationNo) async {
+    Response response = await Connection.dio.post(_deleteTrainStation,
+        options: Connection.options,
+        queryParameters: {
+          'stationTrainCode': stationTrainCode,
+          'stationTelecode': stationTelecode,
+          'stationNo': stationNo,
         });
     if (response.data['code'] == 0) {
       return response.data['data'];
@@ -430,6 +537,33 @@ class TrainApi {
           'endStationTelecode': endStationTelecode,
           'ratio': ratio,
         });
+    if (response.data['code'] == 0) {
+      return response.data['data'];
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<bool> addTrain(
+      String stationTrainCode,
+      String startStationTelecode,
+      String endStationTelecode,
+      String startTime,
+      String endTime,
+      int? arriveDayDiff) async {
+    if (arriveDayDiff == null) {
+      return false;
+    }
+    Response response = await Connection.dio
+        .post(_addTrain, options: Connection.options, queryParameters: {
+      'stationTrainCode': stationTrainCode,
+      'startStationTelecode': startStationTelecode,
+      'endStationTelecode': endStationTelecode,
+      'startTime': startTime,
+      'endTime': endTime,
+      'arriveDayDiff': arriveDayDiff,
+    });
     if (response.data['code'] == 0) {
       return response.data['data'];
     } else {
@@ -504,6 +638,7 @@ class StationApi {
 
 class SeatTypeApi {
   static String _allSeatTypes = host + '/seatType/seatTypes';
+  static String _renameSeatTypeName = host + '/admin/renameSeatTypeName';
 
   static Future<List<SeatType>> allSeatTypes() async {
     Response response =
@@ -516,10 +651,27 @@ class SeatTypeApi {
     }
     return [];
   }
+
+  static Future<bool> renameSeatTypeName(
+      String seatTypeCode, String seatTypeName) async {
+    Response response = await Connection.dio.post(_renameSeatTypeName,
+        options: Connection.options,
+        queryParameters: {
+          'seatTypeCode': seatTypeCode,
+          'seatTypeName': seatTypeName
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'] ?? false;
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
 }
 
 class TrainClassApi {
   static String _allTrainClasses = host + '/trainClass/trainClass';
+  static String _renameTrainClassName = host + '/admin/renameTrainClassName';
 
   static Future<List<TrainClass>> allTrainClasses() async {
     Response response = await Connection.dio
@@ -531,6 +683,22 @@ class TrainClassApi {
       BotToast.showText(text: response.data['message']);
     }
     return [];
+  }
+
+  static Future<bool> renameTrainClassName(
+      String trainClassCode, String trainClassName) async {
+    Response response = await Connection.dio.post(_renameTrainClassName,
+        options: Connection.options,
+        queryParameters: {
+          'trainClassCode': trainClassCode,
+          'trainClassName': trainClassName
+        });
+    if (response.data['code'] == 0) {
+      return response.data['data'] ?? false;
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
   }
 }
 
@@ -757,8 +925,10 @@ class SystemApi {
 
 class PassengerApi {
   static String _allMyPassenger = host + '/passenger/myPassengers';
+  static String _adminAllPassengers = host + '/admin/allPassengers';
   static String _addPassenger = host + '/passenger/addPassenger';
   static String _removePassenger = host + '/passenger/removePassenger';
+  static String _alterPassenger = host + '/admin/alterPassenger';
 
   static Future<List<Passenger>> allMyPassengers() async {
     Response response =
@@ -783,9 +953,34 @@ class PassengerApi {
     return null;
   }
 
-  static Future<bool> removePassenger(int passengerId) async {
+  static Future<bool> removePassenger(num passengerId) async {
+    Response response = await Connection.dio.post(_removePassenger,
+        options: Connection.options,
+        queryParameters: {'passengerId': passengerId});
+    if (response.data['code'] == 0) {
+      return true;
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return false;
+  }
+
+  static Future<List<Passenger>> adminAllPassengers() async {
     Response response = await Connection.dio
-        .post(_removePassenger, options: Connection.options);
+        .post(_adminAllPassengers, options: Connection.options);
+    if (response.data['code'] == 0) {
+      List l = response.data['data'];
+      return l.map((e) => Passenger.fromJson(e)).toList();
+    } else {
+      BotToast.showText(text: response.data['message']);
+    }
+    return [];
+  }
+
+  static Future<bool> alterPassenger(num passengerId) async {
+    Response response = await Connection.dio.post(_alterPassenger,
+        options: Connection.options,
+        queryParameters: {'passengerId': passengerId});
     if (response.data['code'] == 0) {
       return true;
     } else {
@@ -874,12 +1069,13 @@ class CoachApi {
   }
 }
 
-class SellApi{
+class SellApi {
   static String _getSellByTime = host + '/admin/getSellByTime';
   static String _getSellByTrainClass = host + '/admin/getSellByTrainClass';
+
   static Future<Map<String, num>> getSellByTime() async {
-    Response response = await Connection.dio
-        .post(_getSellByTime, options: Connection.options);
+    Response response =
+        await Connection.dio.post(_getSellByTime, options: Connection.options);
     if (response.data['code'] == 0) {
       Map m = response.data['data'];
       return m.cast<String, num>();

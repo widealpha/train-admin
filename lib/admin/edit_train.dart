@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:train/api/api.dart';
@@ -76,6 +77,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
               Divider(),
               Expanded(
                   child: ListView.builder(
+                controller: ScrollController(),
                 itemBuilder: (c, i) {
                   TrainStation station = trainStationList[i];
                   return ListTile(
@@ -83,7 +85,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                     leading: Text('${i + 1}'),
                     title: Text(getStationName(station.stationTelecode)),
                     subtitle: Text(
-                        '正点时间:${station.arriveTime.substring(0, 5)}-${station.startTime.substring(0, 5)}'
+                        '正点时间:${station.arriveTime?.substring(0, 5)}-${station.startTime.substring(0, 5)}'
                         '\n${isLate() ? '晚点时间:${station.updateArriveTime ?? station.arriveTime.substring(0, 5)}'
                             '-${station.updateStartTime ?? station.startTime.substring(0, 5)}' : ''}'),
                     trailing: TextButton(
@@ -147,6 +149,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                 Divider(),
                 Expanded(
                     child: ListView.separated(
+                  controller: ScrollController(),
                   itemBuilder: (c, i) => ListTile(
                     leading: Text('${coachList[i].coachNo}车厢'),
                     title: Text('${seatTypeMapper[coachList[i].seatTypeCode]}'),
@@ -180,6 +183,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
               Divider(),
               Expanded(
                   child: ListView.separated(
+                controller: ScrollController(),
                 itemBuilder: (c, i) => ListTile(
                   leading: Text('${i + 1}'),
                   title: Text(
@@ -190,7 +194,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                     children: [
                       TextButton(
                           onPressed: () async {
-                            fetchData();
+                            deleteTrainStation(trainStationList[i]);
                           },
                           child: Text('删除')),
                       TextButton(
@@ -206,7 +210,9 @@ class _EditTrainPageState extends State<EditTrainPage> {
                   children: [
                     Divider(),
                     TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          addTrainStation(widget.stationTrainCode);
+                        },
                         icon: Icon(Icons.add_circle_outline_rounded),
                         label: Text('添加')),
                     Divider(),
@@ -532,9 +538,19 @@ class _EditTrainPageState extends State<EditTrainPage> {
   Future<void> updateTrainStation(TrainStation trainStation) async {
     final TextEditingController stationController = TextEditingController(
         text: getStationName(trainStation.stationTelecode));
+    final TextEditingController startTimeController = TextEditingController(
+        text: '${trainStation.startTime.substring(0, 5)}');
+    final TextEditingController arriveTimeController = TextEditingController(
+        text: '${trainStation.arriveTime.substring(0, 5)}');
     final TextEditingController stationNoController =
         TextEditingController(text: '${trainStation.stationNo}');
-    late Station station;
+    final TextEditingController startDayDiffController =
+        TextEditingController(text: '${trainStation.startDayDiff}');
+    final TextEditingController arriveDayDiffController =
+        TextEditingController(text: '${trainStation.arriveDayDiff}');
+    TimeOfDay? startTime;
+    TimeOfDay? arriveTime;
+    Station? station;
     Get.dialog(AlertDialog(
       title: Text('编辑站点信息'),
       content: Column(
@@ -565,13 +581,72 @@ class _EditTrainPageState extends State<EditTrainPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              controller: stationNoController,
+              controller: arriveTimeController,
               readOnly: true,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: '站点顺序',
-                labelText: '站点顺序',
+                hintText: '到达时间',
+                labelText: '到达时间',
+                suffix: TextButton(
+                    onPressed: () async {
+                      TimeOfDay? t = await Get.dialog(TimePickerDialog(
+                          initialTime: arriveTime ?? TimeOfDay.now()));
+                      if (t != null) {
+                        arriveTime = t;
+                        arriveTimeController.text = t.format(context);
+                      }
+                    },
+                    child: Text('选择')),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: arriveDayDiffController,
+              readOnly: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '到达距离发车天数',
+                labelText: '到达距离发车天数',
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: startTimeController,
+              readOnly: true,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '出发时间',
+                labelText: '出发时间',
+                suffix: TextButton(
+                    onPressed: () async {
+                      TimeOfDay? t = await Get.dialog(TimePickerDialog(
+                          initialTime: startTime ?? TimeOfDay.now()));
+                      if (t != null) {
+                        startTime = t;
+                        startTimeController.text = t.format(context);
+                      }
+                    },
+                    child: Text('选择')),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: startDayDiffController,
+              readOnly: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '出发距离发车天数',
+                labelText: '出发距离发车天数',
               ),
             ),
           ),
@@ -581,10 +656,17 @@ class _EditTrainPageState extends State<EditTrainPage> {
         TextButton(
             onPressed: () async {
               await TrainApi.updateTrainStation(
-                  trainStation.stationTrainCode,
-                  trainStation.stationTelecode,
-                  trainStation.stationNo,
-                  station.telecode);
+                trainStation.stationTrainCode,
+                trainStation.stationTelecode,
+                trainStation.stationNo,
+                station?.telecode ?? trainStation.stationTelecode,
+                startTime?.format(context) ??
+                    trainStation.startTime.substring(0, 5),
+                arriveTime?.format(context) ??
+                    trainStation.arriveTime.substring(0, 5),
+                num.tryParse(arriveDayDiffController.text),
+                num.tryParse(startDayDiffController.text),
+              );
               Get.back();
               fetchData();
             },
@@ -598,7 +680,168 @@ class _EditTrainPageState extends State<EditTrainPage> {
     ));
   }
 
-  Future<void> addTrainStation() async {}
+  Future<void> addTrainStation(String stationTrainCode) async {
+    final TextEditingController startTimeController = TextEditingController();
+    final TextEditingController stationController = TextEditingController();
+    final TextEditingController arriveTimeController = TextEditingController();
+    final TextEditingController stationNoController = TextEditingController();
+    final TextEditingController startDayDiffController =
+        TextEditingController();
+    final TextEditingController arriveDayDiffController =
+        TextEditingController();
+    TimeOfDay? startTime;
+    TimeOfDay? arriveTime;
+    Station? station;
+    Get.dialog(AlertDialog(
+      title: Text('新建站点信息'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: stationController,
+              readOnly: true,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: '选取站点',
+                  labelText: '选取站点',
+                  suffixIcon: TextButton.icon(
+                    onPressed: () async {
+                      Station? s = await Get.to(() => StationPage());
+                      if (s != null) {
+                        station = s;
+                        stationController.text = s.name;
+                      }
+                    },
+                    icon: Icon(Icons.edit_rounded),
+                    label: Text('编辑'),
+                  )),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: arriveTimeController,
+              readOnly: true,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '到达时间',
+                labelText: '到达时间',
+                suffix: TextButton(
+                    onPressed: () async {
+                      TimeOfDay? t = await Get.dialog(TimePickerDialog(
+                          initialTime: arriveTime ?? TimeOfDay.now()));
+                      if (t != null) {
+                        arriveTime = t;
+                        arriveTimeController.text = t.format(context);
+                      }
+                    },
+                    child: Text('选择')),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: arriveDayDiffController,
+              readOnly: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '到达距离发车天数',
+                labelText: '到达距离发车天数',
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: startTimeController,
+              readOnly: true,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '出发时间',
+                labelText: '出发时间',
+                suffix: TextButton(
+                    onPressed: () async {
+                      TimeOfDay? t = await Get.dialog(TimePickerDialog(
+                          initialTime: startTime ?? TimeOfDay.now()));
+                      if (t != null) {
+                        startTime = t;
+                        startTimeController.text = t.format(context);
+                      }
+                    },
+                    child: Text('选择')),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: startDayDiffController,
+              readOnly: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '出发距离发车天数',
+                labelText: '出发距离发车天数',
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: stationNoController,
+              readOnly: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '站点序号',
+                labelText: '站点序号',
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () async {
+              if (station == null){
+                BotToast.showText(text: '部分信息无效,请检查');
+              }
+              if (await TrainApi.addTrainStation(
+                stationTrainCode,
+                station!.telecode,
+                int.tryParse(stationNoController.text),
+                startTime?.format(context),
+                arriveTime?.format(context),
+                num.tryParse(arriveDayDiffController.text),
+                num.tryParse(startDayDiffController.text))){
+                Get.back();
+                fetchData();
+              } else {
+                BotToast.showText(text: '添加失败');
+              }
+
+            },
+            child: Text('确认')),
+        TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: Text('取消')),
+      ],
+    ));
+  }
+
+  Future<void> deleteTrainStation(TrainStation trainStation) async {
+    await TrainApi.deleteTrainStation(trainStation.stationTrainCode,
+        trainStation.stationTelecode, trainStation.stationNo);
+    fetchData();
+  }
 
   String getStationName(String? telecode) {
     if (telecode == null) {
