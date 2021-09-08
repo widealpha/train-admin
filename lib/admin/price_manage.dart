@@ -101,6 +101,8 @@ class _PriceManagePageState extends State<PriceManagePage> {
                                                 _trainClassController.text));
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
+                                    } else {
+                                      BotToast.showText(text: '更新成功');
                                     }
                                   },
                                   icon: Icon(Icons.update),
@@ -147,6 +149,8 @@ class _PriceManagePageState extends State<PriceManagePage> {
                                                 _seatTypeController.text));
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
+                                    }  else {
+                                      BotToast.showText(text: '更新成功');
                                     }
                                   },
                                   icon: Icon(Icons.update),
@@ -198,6 +202,8 @@ class _PriceManagePageState extends State<PriceManagePage> {
                                 double.tryParse(_trainStationController.text));
                             if (!b) {
                               BotToast.showText(text: '更新失败');
+                            }  else {
+                              BotToast.showText(text: '更新成功');
                             }
                           },
                           child: Text('提交')),
@@ -291,7 +297,7 @@ class _PriceManagePageState extends State<PriceManagePage> {
                   )),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('火车售票额统计(单位:千元)',
+                    child: Text('火车售票额统计(单位:百元)',
                         style: TextStyle(color: Colors.grey)),
                   ),
                 ],
@@ -323,6 +329,7 @@ class _PriceManagePageState extends State<PriceManagePage> {
     DateTime dateTime = DateTime.now();
     dateTime = dateTime.subtract(Duration(days: 6));
 
+    sellData.clear();
     for (int i = 0; i < 7; i++) {
       DateTime t = dateTime.add(Duration(days: i));
       if (sellTimeMap[t.toIso8601String().substring(0, 10)] != null) {

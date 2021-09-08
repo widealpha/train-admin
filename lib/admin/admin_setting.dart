@@ -125,6 +125,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
                                     } else {
+                                      BotToast.showText(text: '更新成功');
                                       fetchData();
                                     }
                                   },
@@ -175,6 +176,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                                     if (!b) {
                                       BotToast.showText(text: '更新失败');
                                     } else {
+                                      BotToast.showText(text: '更新成功');
                                       fetchData();
                                     }
                                   },
