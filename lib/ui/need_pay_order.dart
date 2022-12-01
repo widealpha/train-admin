@@ -262,7 +262,7 @@ class _OrderCardState extends State<OrderCard> {
                             Icons.credit_card_rounded,
                             color: Colors.blue,
                           ),
-                          Text('   ' + t.stationTrainCode!),
+                          Text('   ' + t.trainCode!),
                         ],
                       ),
                       SizedBox(

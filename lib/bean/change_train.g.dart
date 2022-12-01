@@ -8,9 +8,9 @@ part of 'change_train.dart';
 
 ChangeTrain _$ChangeTrainFromJson(Map<String, dynamic> json) {
   return ChangeTrain(
-    firstStationTrainCode: json['firstStationTrainCode'] as String,
+    firstTrainCode: json['firstTrainCode'] as String,
     firstTrainArriveTime: json['firstTrainArriveTime'] as String,
-    lastStationTrainCode: json['lastStationTrainCode'] as String,
+    lastTrainCode: json['lastTrainCode'] as String,
     lastTrainStartTime: json['lastTrainStartTime'] as String,
     changeStation: json['changeStation'] as String,
     interval: json['interval'] as num,
@@ -21,9 +21,9 @@ ChangeTrain _$ChangeTrainFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ChangeTrainToJson(ChangeTrain instance) =>
     <String, dynamic>{
-      'firstStationTrainCode': instance.firstStationTrainCode,
+      'firstTrainCode': instance.firstTrainCode,
       'firstTrainArriveTime': instance.firstTrainArriveTime,
-      'lastStationTrainCode': instance.lastStationTrainCode,
+      'lastTrainCode': instance.lastTrainCode,
       'lastTrainStartTime': instance.lastTrainStartTime,
       'changeStation': instance.changeStation,
       'firstTrain': instance.firstTrain,

@@ -9,7 +9,7 @@ part 'train.g.dart';
 @JsonSerializable()
 class Train {
   String? trainNo;
-  String? stationTrainCode;
+  String? trainCode;
   String? startStationTelecode;
   Station? startStation;
   String? startStartTime;
@@ -30,7 +30,7 @@ class Train {
 
   Train(
       {this.trainNo,
-      this.stationTrainCode,
+      this.trainCode,
       this.startStationTelecode,
       this.startStation,
       this.startStartTime,

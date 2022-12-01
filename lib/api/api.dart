@@ -21,8 +21,8 @@ import 'package:train/bean/train_station.dart';
 import 'package:train/bean/user_info.dart';
 import 'package:train/util/hive_util.dart';
 
-// final String host = 'https://widealpha.top:8443/train';
-final String host = 'http://localhost:8080';
+final String host = 'https://widealpha.top:8443/train';
+// final String host = 'http://localhost:8080';
 
 class Connection {
   static Dio? _dio;
@@ -335,7 +335,7 @@ class TrainApi {
     return [];
   }
 
-  static Future<List<String>> allStationTrainCode() async {
+  static Future<List<String>> allTrainCode() async {
     Response response = await Connection.dio
         .post(_allStationTrainCode, options: Connection.options);
     if (response.data['code'] == 0) {

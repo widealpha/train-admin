@@ -529,7 +529,7 @@ class _TrainCardState extends State<TrainCard> {
   @override
   void initState() {
     TrainApi.trainPrice(train.nowStartStationTelecode!,
-            train.nowEndStationTelecode!, train.stationTrainCode!)
+            train.nowEndStationTelecode!, train.trainCode!)
         .then((list) {
       trainPriceList.clear();
       trainPriceList.addAll(list);
@@ -540,7 +540,7 @@ class _TrainCardState extends State<TrainCard> {
     TrainApi.trainTicketRemaining(
             train.nowStartStationTelecode!,
             train.nowEndStationTelecode!,
-            train.stationTrainCode!,
+            train.trainCode!,
             widget.date.toIso8601String().substring(0, 10))
         .then((list) {
       remainSeatList.clear();
@@ -570,7 +570,7 @@ class _TrainCardState extends State<TrainCard> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text(train.stationTrainCode!,
+                    child: Text(train.trainCode!,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     width: 80,
@@ -626,12 +626,12 @@ class _TrainCardState extends State<TrainCard> {
                   List<RemainSeat> l1 = await TrainApi.trainTicketRemaining(
                       train.nowStartStationTelecode!,
                       train.nowEndStationTelecode!,
-                      train.stationTrainCode!,
+                      train.trainCode!,
                       widget.date.toIso8601String().substring(0, 10));
                   List<TrainPrice> l2 = await TrainApi.trainPrice(
                       train.nowStartStationTelecode!,
                       train.nowEndStationTelecode!,
-                      train.stationTrainCode!);
+                      train.trainCode!);
                   if (l1.isEmpty || l2.isEmpty) {
                     BotToast.showText(text: '数据已过期');
                   } else {

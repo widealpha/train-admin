@@ -7,14 +7,14 @@ class RemainSeat {
   String? startStationTelecode;
   String? endStationTelecode;
   num? remaining;
-  String? stationTrainCode;
+  String? trainCode;
   String? trainClassCode;
   String? trainClassName;
   String? seatTypeCode;
   String? seatTypeName;
   String? date;
 
-  RemainSeat({this.startStationTelecode, this.endStationTelecode, this.remaining, this.stationTrainCode, this.trainClassCode, this.trainClassName, this.seatTypeCode, this.seatTypeName, this.date});
+  RemainSeat({this.startStationTelecode, this.endStationTelecode, this.remaining, this.trainCode, this.trainClassCode, this.trainClassName, this.seatTypeCode, this.seatTypeName, this.date});
 
   factory RemainSeat.fromJson(Map<String, dynamic> json) => _$RemainSeatFromJson(json);
 

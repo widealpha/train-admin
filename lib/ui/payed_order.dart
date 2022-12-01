@@ -142,7 +142,7 @@ class _OrderCardState extends State<OrderCard> {
                                 Icons.credit_card_rounded,
                                 color: Colors.blue,
                               ),
-                              Text('   ' + t.stationTrainCode!),
+                              Text('   ' + t.trainCode!),
                             ],
                           ),
                           SizedBox(
@@ -251,7 +251,7 @@ class _OrderCardState extends State<OrderCard> {
                               if (train != null){
                                 Get.dialog(AlertDialog(
                                   title: Text('温馨提醒'),
-                                  content: Text('确认从 ${t.stationTrainCode} 改签到 ${train.stationTrainCode} 吗'),
+                                  content: Text('确认从 ${t.trainCode} 改签到 ${train.trainCode} 吗'),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -261,7 +261,7 @@ class _OrderCardState extends State<OrderCard> {
                                     ),
                                     TextButton(
                                       onPressed: () async {
-                                        Order? order = await TicketApi.changeTicket(t.ticketId!,train.stationTrainCode!);
+                                        Order? order = await TicketApi.changeTicket(t.ticketId!,train.trainCode!);
                                         if (order == null){
                                           BotToast.showText(text: '改签失败');
                                         } else {

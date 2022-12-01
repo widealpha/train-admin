@@ -7,7 +7,7 @@ part 'ticket.g.dart';
 class Ticket {
   num? ticketId;
   num? coachId;
-  String? stationTrainCode;
+  String? trainCode;
   String? startStationTelecode;
   String? endStationTelecode;
   Station? startStation;
@@ -27,7 +27,7 @@ class Ticket {
   Ticket(
       {this.ticketId,
       this.coachId,
-      this.stationTrainCode,
+      this.trainCode,
       this.startStationTelecode,
       this.endStationTelecode,
       this.startStation,

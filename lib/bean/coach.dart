@@ -6,7 +6,7 @@ part 'coach.g.dart';
 class Coach {
   num coachId;
   num coachNo;
-  String stationTrainCode;
+  String trainCode;
   String seatTypeCode;
   num seat;
   num seatCount;
@@ -14,7 +14,7 @@ class Coach {
   Coach(
       {required this.coachId,
       required this.coachNo,
-      required this.stationTrainCode,
+      required this.trainCode,
       required this.seatTypeCode,
       required this.seat,
       required this.seatCount});

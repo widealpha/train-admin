@@ -4,7 +4,7 @@ part 'train_price.g.dart';
 
 @JsonSerializable()
 class TrainPrice {
-  String stationTrainCode;
+  String trainCode;
   String seatTypeCode;
   String seatTypeName;
   String trainClassCode;
@@ -13,7 +13,7 @@ class TrainPrice {
   String startStationTelecode;
   String endStationTelecode;
 
-  TrainPrice({required this.stationTrainCode, required this.seatTypeCode, required this.seatTypeName, required this.trainClassCode, required this.trainClassName, required this.price, required this.startStationTelecode, required this.endStationTelecode});
+  TrainPrice({required this.trainCode, required this.seatTypeCode, required this.seatTypeName, required this.trainClassCode, required this.trainClassName, required this.price, required this.startStationTelecode, required this.endStationTelecode});
 
   factory TrainPrice.fromJson(Map<String, dynamic> json) => _$TrainPriceFromJson(json);
 

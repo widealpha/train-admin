@@ -180,7 +180,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
                           Icons.credit_card_rounded,
                           color: Colors.blue,
                         ),
-                        Text('   ' + widget.train.stationTrainCode!),
+                        Text('   ' + widget.train.trainCode!),
                       ],
                     ),
                     SizedBox(
@@ -250,7 +250,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
                           Icons.credit_card_rounded,
                           color: Colors.blue,
                         ),
-                        Text('   ' + widget.train2.stationTrainCode!),
+                        Text('   ' + widget.train2.trainCode!),
                       ],
                     ),
                     SizedBox(
@@ -451,7 +451,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
                             int? ticketId = await TicketApi.buyTicket(
                                 widget.train.nowStartStationTelecode!,
                                 widget.train.nowEndStationTelecode!,
-                                widget.train.stationTrainCode!,
+                                widget.train.trainCode!,
                                 trainPriceList[choose].seatTypeCode,
                                 p.passengerId!,
                                 p.student!,
@@ -460,7 +460,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
                             int? ticketId2 = await TicketApi.buyTicket(
                                 widget.train2.nowStartStationTelecode!,
                                 widget.train2.nowEndStationTelecode!,
-                                widget.train2.stationTrainCode!,
+                                widget.train2.trainCode!,
                                 trainPriceList[choose].seatTypeCode,
                                 p.passengerId!,
                                 p.student!,
@@ -525,7 +525,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
       margin: EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
       child: Text(
-        trainPriceList[0].stationTrainCode,
+        trainPriceList[0].trainCode,
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white),
       ),
@@ -606,7 +606,7 @@ class _OrderConfirmTwoPageState extends State<OrderConfirmTwoPage> {
       margin: EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
       child: Text(
-        trainPriceList2[0].stationTrainCode,
+        trainPriceList2[0].trainCode,
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white),
       ),

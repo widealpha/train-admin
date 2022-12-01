@@ -9,7 +9,7 @@ part of 'train.dart';
 Train _$TrainFromJson(Map<String, dynamic> json) {
   return Train(
     trainNo: json['trainNo'] as String?,
-    stationTrainCode: json['stationTrainCode'] as String?,
+    trainCode: json['trainCode'] as String?,
     startStationTelecode: json['startStationTelecode'] as String?,
     startStation: json['startStation'] == null
         ? null
@@ -41,7 +41,7 @@ Train _$TrainFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$TrainToJson(Train instance) => <String, dynamic>{
       'trainNo': instance.trainNo,
-      'stationTrainCode': instance.stationTrainCode,
+      'trainCode': instance.trainCode,
       'startStationTelecode': instance.startStationTelecode,
       'startStation': instance.startStation,
       'startStartTime': instance.startStartTime,

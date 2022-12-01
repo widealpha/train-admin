@@ -94,7 +94,7 @@ class _SelfTicketPageState extends State<SelfTicketPage> {
                             Icons.credit_card_rounded,
                             color: Colors.blue,
                           ),
-                          Text('   ' + t.stationTrainCode!),
+                          Text('   ' + t.trainCode!),
                         ],
                       ),
                       SizedBox(
@@ -203,7 +203,7 @@ class _SelfTicketPageState extends State<SelfTicketPage> {
                                 Get.dialog(AlertDialog(
                                   title: Text('温馨提醒'),
                                   content: Text(
-                                      '确认从 ${t.stationTrainCode} 改签到 ${train.stationTrainCode} 吗'),
+                                      '确认从 ${t.trainCode} 改签到 ${train.trainCode} 吗'),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -216,7 +216,7 @@ class _SelfTicketPageState extends State<SelfTicketPage> {
                                         Order? order =
                                             await TicketApi.changeTicket(
                                                 t.ticketId!,
-                                                train.stationTrainCode!);
+                                                train.trainCode!);
                                         if (order == null) {
                                           BotToast.showText(text: '改签失败');
                                         } else {

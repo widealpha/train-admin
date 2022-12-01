@@ -563,7 +563,7 @@ class _ChangeTwoTrainCardState extends State<ChangeTwoTrainCard> {
                       alignment: Alignment.center,
                       child: Column(
                         children: [
-                          Text(train.firstStationTrainCode,
+                          Text(train.firstTrainCode,
                               style: TextStyle(fontSize: 16)),
                           Divider(
                             height: 2,
@@ -597,7 +597,7 @@ class _ChangeTwoTrainCardState extends State<ChangeTwoTrainCard> {
                       alignment: Alignment.center,
                       child: Column(
                         children: [
-                          Text(train.lastStationTrainCode,
+                          Text(train.lastTrainCode,
                               style: TextStyle(fontSize: 16)),
                           Divider(
                             height: 2,
@@ -629,21 +629,21 @@ class _ChangeTwoTrainCardState extends State<ChangeTwoTrainCard> {
                   List<RemainSeat> l1 = await TrainApi.trainTicketRemaining(
                       train.firstTrain.nowStartStationTelecode!,
                       train.firstTrain.nowEndStationTelecode!,
-                      train.firstTrain.stationTrainCode!,
+                      train.firstTrain.trainCode!,
                       widget.date.toIso8601String().substring(0, 10));
                   List<TrainPrice> l2 = await TrainApi.trainPrice(
                       train.firstTrain.nowStartStationTelecode!,
                       train.firstTrain.nowEndStationTelecode!,
-                      train.firstTrain.stationTrainCode!);
+                      train.firstTrain.trainCode!);
                   List<RemainSeat> l3 = await TrainApi.trainTicketRemaining(
                       train.lastTrain.nowStartStationTelecode!,
                       train.lastTrain.nowEndStationTelecode!,
-                      train.lastTrain.stationTrainCode!,
+                      train.lastTrain.trainCode!,
                       widget.date.toIso8601String().substring(0, 10));
                   List<TrainPrice> l4 = await TrainApi.trainPrice(
                       train.lastTrain.nowStartStationTelecode!,
                       train.lastTrain.nowEndStationTelecode!,
-                      train.lastTrain.stationTrainCode!);
+                      train.lastTrain.trainCode!);
                   if (l1.isEmpty || l2.isEmpty) {
                     BotToast.showText(text: '数据已过期');
                   } else {
@@ -830,11 +830,11 @@ class _ChangeTwoTrainCardState extends State<ChangeTwoTrainCard> {
       trainPriceList[train] = await TrainApi.trainPrice(
           train.nowStartStationTelecode!,
           train.nowEndStationTelecode!,
-          train.stationTrainCode!);
+          train.trainCode!);
       remainSeatList[train] = await TrainApi.trainTicketRemaining(
           train.nowStartStationTelecode!,
           train.nowEndStationTelecode!,
-          train.stationTrainCode!,
+          train.trainCode!,
           widget.date.toIso8601String().substring(0, 10));
       if (mounted) {
         setState(() {});

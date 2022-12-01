@@ -5,16 +5,16 @@ part 'change_train.g.dart';
 
 @JsonSerializable()
 class ChangeTrain {
-  String firstStationTrainCode;
+  String firstTrainCode;
   String firstTrainArriveTime;
-  String lastStationTrainCode;
+  String lastTrainCode;
   String lastTrainStartTime;
   String changeStation;
   Train firstTrain;
   Train lastTrain;
   num interval;
 
-  ChangeTrain({required this.firstStationTrainCode, required this.firstTrainArriveTime, required this.lastStationTrainCode, required this.lastTrainStartTime, required this.changeStation, required this.interval, required this.firstTrain, required this.lastTrain});
+  ChangeTrain({required this.firstTrainCode, required this.firstTrainArriveTime, required this.lastTrainCode, required this.lastTrainStartTime, required this.changeStation, required this.interval, required this.firstTrain, required this.lastTrain});
 
   factory ChangeTrain.fromJson(Map<String, dynamic> json) => _$ChangeTrainFromJson(json);
 

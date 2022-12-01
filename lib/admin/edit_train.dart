@@ -9,9 +9,9 @@ import 'package:train/bean/train_station.dart';
 import 'package:train/ui/station_page.dart';
 
 class EditTrainPage extends StatefulWidget {
-  final String stationTrainCode;
+  final String trainCode;
 
-  const EditTrainPage({Key? key, required this.stationTrainCode})
+  const EditTrainPage({Key? key, required this.trainCode})
       : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('编辑列车: ${widget.stationTrainCode}'),
+        title: Text('编辑列车: ${widget.trainCode}'),
       ),
       body: buildBody(context),
     );
@@ -107,7 +107,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                             ? null
                             : () async {
                                 await TrainApi.stopTrain(
-                                    widget.stationTrainCode);
+                                    widget.trainCode);
                                 fetchData();
                               },
                         child: Text('停运')),
@@ -120,7 +120,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                             ? null
                             : () async {
                                 await TrainApi.startTrain(
-                                    widget.stationTrainCode);
+                                    widget.trainCode);
                                 fetchData();
                               },
                         child: Text('启运')),
@@ -211,7 +211,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                     Divider(),
                     TextButton.icon(
                         onPressed: () {
-                          addTrainStation(widget.stationTrainCode);
+                          addTrainStation(widget.trainCode);
                         },
                         icon: Icon(Icons.add_circle_outline_rounded),
                         label: Text('添加')),
@@ -318,12 +318,12 @@ class _EditTrainPageState extends State<EditTrainPage> {
                 TextButton(
                     onPressed: () async {
                       await TrainApi.updateStartTime(
-                          trainStation.stationTrainCode,
+                          trainStation.trainCode,
                           trainStation.stationTelecode,
                           trainStation.stationNo,
                           startController.text + ':00');
                       await TrainApi.updateArriveTime(
-                          trainStation.stationTrainCode,
+                          trainStation.trainCode,
                           trainStation.stationTelecode,
                           trainStation.stationNo,
                           arriveController.text + ':00');
@@ -339,12 +339,12 @@ class _EditTrainPageState extends State<EditTrainPage> {
                 TextButton(
                     onPressed: () async {
                       await TrainApi.updateStartTime(
-                          trainStation.stationTrainCode,
+                          trainStation.trainCode,
                           trainStation.stationTelecode,
                           trainStation.stationNo,
                           null);
                       await TrainApi.updateArriveTime(
-                          trainStation.stationTrainCode,
+                          trainStation.trainCode,
                           trainStation.stationTelecode,
                           trainStation.stationNo,
                           null);
@@ -516,7 +516,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                           num.parse(coachNoController.text),
                           num.parse(seatNumController.text),
                           s,
-                          widget.stationTrainCode);
+                          widget.trainCode);
                       Get.back();
                       fetchData();
                     },
@@ -656,7 +656,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
         TextButton(
             onPressed: () async {
               await TrainApi.updateTrainStation(
-                trainStation.stationTrainCode,
+                trainStation.trainCode,
                 trainStation.stationTelecode,
                 trainStation.stationNo,
                 station?.telecode ?? trainStation.stationTelecode,
@@ -680,7 +680,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
     ));
   }
 
-  Future<void> addTrainStation(String stationTrainCode) async {
+  Future<void> addTrainStation(String trainCode) async {
     final TextEditingController startTimeController = TextEditingController();
     final TextEditingController stationController = TextEditingController();
     final TextEditingController arriveTimeController = TextEditingController();
@@ -813,7 +813,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
                 BotToast.showText(text: '部分信息无效,请检查');
               }
               if (await TrainApi.addTrainStation(
-                stationTrainCode,
+                trainCode,
                 station!.telecode,
                 int.tryParse(stationNoController.text),
                 startTime?.format(context),
@@ -838,7 +838,7 @@ class _EditTrainPageState extends State<EditTrainPage> {
   }
 
   Future<void> deleteTrainStation(TrainStation trainStation) async {
-    await TrainApi.deleteTrainStation(trainStation.stationTrainCode,
+    await TrainApi.deleteTrainStation(trainStation.trainCode,
         trainStation.stationTelecode, trainStation.stationNo);
     fetchData();
   }
@@ -854,9 +854,9 @@ class _EditTrainPageState extends State<EditTrainPage> {
     setState(() {
       loading = true;
     });
-    train = (await TrainApi.trainInfo(widget.stationTrainCode))!;
-    coachList = await CoachApi.trainCoachList(widget.stationTrainCode);
-    trainStationList = await TrainApi.trainStations(widget.stationTrainCode);
+    train = (await TrainApi.trainInfo(widget.trainCode))!;
+    coachList = await CoachApi.trainCoachList(widget.trainCode);
+    trainStationList = await TrainApi.trainStations(widget.trainCode);
     var seatTypes = await SeatTypeApi.allSeatTypes();
     seatTypes.forEach((element) {
       seatTypeMapper[element.seatTypeCode!] = element.seatTypeName!;

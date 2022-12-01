@@ -26,7 +26,7 @@ class _TrainManagePageState extends State<TrainManagePage> {
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   bool loading = true;
-  List<String> stationTrainCodeList = [];
+  List<String> trainCodeList = [];
 
   @override
   void initState() {
@@ -53,11 +53,11 @@ class _TrainManagePageState extends State<TrainManagePage> {
                             hintText: '请输入列车号搜索列车',
                             suffixIcon: TextButton.icon(
                               onPressed: () {
-                                if (stationTrainCodeList
+                                if (trainCodeList
                                     .contains(_controller.text.toUpperCase())) {
                                   Get.to(
                                     () => EditTrainPage(
-                                        stationTrainCode:
+                                        trainCode:
                                             _controller.text.toUpperCase()),
                                   );
                                 } else {
@@ -77,22 +77,22 @@ class _TrainManagePageState extends State<TrainManagePage> {
                     itemBuilder: (c, i) {
                       return Row(
                         children: [0, 1, 2, 3, 4]
-                            .map((n) => (i + n) < stationTrainCodeList.length
+                            .map((n) => (i + n) < trainCodeList.length
                                 ? Expanded(
                                     child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: InkWell(
                                       child: Chip(
                                         label: Text(
-                                            stationTrainCodeList[i * 5 + n]),
+                                            trainCodeList[i * 5 + n]),
                                         labelStyle:
                                             TextStyle(color: Colors.white),
                                         backgroundColor: Colors.blue,
                                       ),
                                       onTap: () {
                                         Get.to(() => EditTrainPage(
-                                            stationTrainCode:
-                                                stationTrainCodeList[
+                                            trainCode:
+                                                trainCodeList[
                                                     i * 5 + n]));
                                       },
                                     ),
@@ -101,7 +101,7 @@ class _TrainManagePageState extends State<TrainManagePage> {
                             .toList(),
                       );
                     },
-                    itemCount: stationTrainCodeList.length ~/ 5,
+                    itemCount: trainCodeList.length ~/ 5,
                   ),
                 )
               ],
@@ -246,7 +246,7 @@ class _TrainManagePageState extends State<TrainManagePage> {
                   actions: [
                     TextButton(
                         onPressed: () async {
-                          if (stationTrainCodeList
+                          if (trainCodeList
                               .contains(_addTrainController.text)) {
                             BotToast.showText(text: '已存在列车');
                             return;
@@ -263,7 +263,7 @@ class _TrainManagePageState extends State<TrainManagePage> {
                           } else {
                             Get.back();
                             Get.to(() => EditTrainPage(
-                                stationTrainCode: _addTrainController.text));
+                                trainCode: _addTrainController.text));
                             fetchData();
                           }
                         },
@@ -284,7 +284,7 @@ class _TrainManagePageState extends State<TrainManagePage> {
   void fetchData() async {
     loading = true;
     setState(() {});
-    stationTrainCodeList = await TrainApi.allStationTrainCode();
+    trainCodeList = await TrainApi.allTrainCode();
     loading = false;
     setState(() {});
   }

@@ -472,7 +472,7 @@ class _ChangeTrainCardState extends State<ChangeTrainCard> {
   @override
   void initState() {
     TrainApi.trainPrice(train.nowStartStationTelecode!,
-        train.nowEndStationTelecode!, train.stationTrainCode!)
+        train.nowEndStationTelecode!, train.trainCode!)
         .then((list) {
       trainPriceList.clear();
       trainPriceList.addAll(list);
@@ -483,7 +483,7 @@ class _ChangeTrainCardState extends State<ChangeTrainCard> {
     TrainApi.trainTicketRemaining(
         train.nowStartStationTelecode!,
         train.nowEndStationTelecode!,
-        train.stationTrainCode!,
+        train.trainCode!,
         widget.date.toIso8601String().substring(0, 10))
         .then((list) {
       remainSeatList.clear();
@@ -513,7 +513,7 @@ class _ChangeTrainCardState extends State<ChangeTrainCard> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text(train.stationTrainCode!,
+                    child: Text(train.trainCode!,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     width: 80,

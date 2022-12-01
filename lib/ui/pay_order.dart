@@ -147,7 +147,7 @@ class _PayOrderPageState extends State<PayOrderPage> {
                                         Icons.credit_card_rounded,
                                         color: Colors.blue,
                                       ),
-                                      Text('   ' + ticket.stationTrainCode!),
+                                      Text('   ' + ticket.trainCode!),
                                     ],
                                   ),
                                   SizedBox(

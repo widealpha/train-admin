@@ -10,7 +10,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) {
   return Ticket(
     ticketId: json['ticketId'] as num?,
     coachId: json['coachId'] as num?,
-    stationTrainCode: json['stationTrainCode'] as String?,
+    trainCode: json['trainCode'] as String?,
     startStationTelecode: json['startStationTelecode'] as String?,
     endStationTelecode: json['endStationTelecode'] as String?,
     startStation: json['startStation'] == null
@@ -32,7 +32,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'ticketId': instance.ticketId,
       'coachId': instance.coachId,
-      'stationTrainCode': instance.stationTrainCode,
+      'trainCode': instance.trainCode,
       'startStationTelecode': instance.startStationTelecode,
       'endStationTelecode': instance.endStationTelecode,
       'startStation': instance.startStation,

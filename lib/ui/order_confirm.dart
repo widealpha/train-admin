@@ -168,7 +168,7 @@ class _OrderConfirmPageState extends State<OrderConfirmPage> {
                           Icons.credit_card_rounded,
                           color: Colors.blue,
                         ),
-                        Text('   ' + widget.train.stationTrainCode!),
+                        Text('   ' + widget.train.trainCode!),
                       ],
                     ),
                     SizedBox(
@@ -367,7 +367,7 @@ class _OrderConfirmPageState extends State<OrderConfirmPage> {
                             int? ticketId = await TicketApi.buyTicket(
                                 widget.train.nowStartStationTelecode!,
                                 widget.train.nowEndStationTelecode!,
-                                widget.train.stationTrainCode!,
+                                widget.train.trainCode!,
                                 trainPriceList[choose].seatTypeCode,
                                 p.passengerId!,
                                 p.student!,
