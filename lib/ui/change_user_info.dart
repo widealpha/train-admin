@@ -80,6 +80,7 @@ class _ChangeUserInfoPageState extends State<ChangeUserInfoPage> {
               },
             ),
           ),
+
           Center(child: Text('点击修改头像', style: TextStyle(color: Colors.grey),),),
           Padding(
             padding: const EdgeInsets.all(8.0),
